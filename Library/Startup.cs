@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Library.Models;
+using System.IO;
 
 namespace Library
 {
@@ -34,8 +35,10 @@ namespace Library
                 options.Cookie.IsEssential = true;
             });
 
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "Data");
+
             services.AddDbContext<LibraryContext>(options =>
-           options.UseSqlServer(Configuration.GetConnectionString("LibraryContext")));
+           options.UseSqlServer(Configuration.GetConnectionString("LibraryContext").Replace("|DataDirectory|",path)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
