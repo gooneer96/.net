@@ -19,9 +19,29 @@ namespace Library.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder,string searchString)
         {
-            return View(await _context.Books.ToListAsync());
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["CurrentFilter"] = searchString;
+
+            var books = from b in _context.Books
+                           select b;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                books = books.Where(s => s.Title.Contains(searchString));
+                                     
+            }
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    books = books.OrderByDescending(s => s.Title);
+                    break;                
+                default:
+                    books = books.OrderBy(s => s.Title);
+                    break;
+            }
+
+            return View(await books.AsNoTracking().ToListAsync());
         }
 
         // GET: Books/Details/5

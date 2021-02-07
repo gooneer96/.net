@@ -20,9 +20,29 @@ namespace Library.Controllers
         }
 
         // GET: Borrowings
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "state_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
             var libraryContext = _context.Borrowings.Include(b => b.Book).Include(b => b.Borrower);
+
+            switch (sortOrder)
+            {
+                case "state_desc":
+                    libraryContext = libraryContext.OrderByDescending(b => b.State).Include(b => b.Book).Include(b => b.Borrower);
+                    break;
+                case "Date":
+                    libraryContext = libraryContext.OrderBy(s => s.RentalDate).Include(b => b.Book).Include(b => b.Borrower);
+                    break;
+                case "date_desc":
+                    libraryContext = libraryContext.OrderByDescending(s => s.RentalDate).Include(b => b.Book).Include(b => b.Borrower);
+                    break;
+                default:
+                    libraryContext = libraryContext.OrderBy(s => s.State).Include(b => b.Book).Include(b => b.Borrower);
+                    break;
+            }
+
+            
             return View(await libraryContext.ToListAsync());
         }
 
@@ -73,7 +93,7 @@ namespace Library.Controllers
 
                 var obj = _context.Borrowings.Where(b => b.BookID.Equals(borrowing.BookID)).Where(b=> b.EndDate == null).ToList();
 
-                if (obj.Count()==0)
+                if (obj.Count==0)
                 {
                    _context.Add(borrowing);
                     await _context.SaveChangesAsync();

@@ -15,14 +15,14 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.RentalDate)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]"> @Html.DisplayNameFor(model => model.RentalDate)</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.EndDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.State)
-            </th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]"> @Html.DisplayNameFor(model => model.State)</a>
+</th>
             <th>
                 @Html.DisplayNameFor(model => model.Book)
             </th>
